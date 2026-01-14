@@ -1,20 +1,36 @@
 trigger:
-- main   # mỗi lần push lên nhánh main thì pipeline sẽ chạy
+- main
 
 pool:
-  vmImage: 'ubuntu-latest'   # dùng máy ảo Ubuntu của Azure
+  vmImage: 'ubuntu-latest'
 
 steps:
+
+# Install NodeJS
 - task: NodeTool@0
   inputs:
-    versionSpec: '18.x'      # cài NodeJS version 18
+    versionSpec: '18.x'
   displayName: 'Install Node.js'
 
+# Install dependencies
 - script: |
-    npm install              # cài dependencies
-    npx playwright install  # cài browser cho Playwright
+    npm install
   displayName: 'Install dependencies'
 
+# Install Playwright browsers
 - script: |
-    npx playwright test     # chạy test
+    npx playwright install --with-deps
+  displayName: 'Install Playwright browsers'
+
+# Run Playwright tests
+- script: |
+    npx playwright test
   displayName: 'Run Playwright tests'
+
+# Publish Playwright HTML Report
+- task: PublishPipelineArtifact@1
+  condition: always()
+  inputs:
+    targetPath: playwright-report
+    artifact: playwright-report
+  displayName: 'Publish Playwright HTML Report'
