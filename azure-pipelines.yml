@@ -1,0 +1,20 @@
+trigger:
+- main   # mỗi lần push lên nhánh main thì pipeline sẽ chạy
+
+pool:
+  vmImage: 'ubuntu-latest'   # dùng máy ảo Ubuntu của Azure
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '18.x'      # cài NodeJS version 18
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install              # cài dependencies
+    npx playwright install  # cài browser cho Playwright
+  displayName: 'Install dependencies'
+
+- script: |
+    npx playwright test     # chạy test
+  displayName: 'Run Playwright tests'
