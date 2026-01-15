@@ -43,3 +43,13 @@ steps:
     targetPath: playwright-report
     artifact: playwright-report
   displayName: 'Publish Playwright HTML Report'
+
+  # Publish JUnit Test Results to Azure
+- task: PublishTestResults@2
+  condition: always()
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/junit-report.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    testRunTitle: 'Playwright Automation Test Run'
+  displayName: 'Publish Playwright Test Results'
