@@ -27,6 +27,15 @@ steps:
     npx playwright test
   displayName: 'Run Playwright tests'
 
+# ✅ Publish Test Result for Azure Test Plans
+- task: PublishTestResults@2
+  condition: always()
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/test-results.xml'
+    testRunTitle: 'Playwright Automation Tests'
+  displayName: 'Publish Test Results'
+
 # Publish Playwright HTML Report
 - task: PublishPipelineArtifact@1
   condition: always()
