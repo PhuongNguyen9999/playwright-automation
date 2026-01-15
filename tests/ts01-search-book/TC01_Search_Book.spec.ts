@@ -1,67 +1,50 @@
 import { test, expect } from '@playwright/test';
-// Import framework test
-
 import { BookStorePage } from '../../pages/book-store.page';
-// Import Page Object
-
 import { SEARCH_KEYWORDS, SEARCH_EXPECT_TEXT } from '../../data/books.data';
-// Import data test
 
-test.describe('Search book with multiple results', () => {
-  // Nhóm test
+/**
+ * Test Suite: TS01 - Book Store Search
+ * Module: Book Store
+ */
+test.describe('TS01 - Book Store Search', () => {
+
+  /**
+   * Test Case: TC01 - Search book by keyword
+   * Pre-condition:
+   *   User is on Book Store page
+   *
+   * Steps:
+   *   1. Navigate to Book Store page
+   *   2. Input keyword into search box
+   *   3. Verify search result
+   *
+   * Expected Result:
+   *   All displayed book titles contain the search keyword
+   */
 
   for (const keyword of SEARCH_KEYWORDS) {
-    // Lặp qua từng keyword
 
-    test(`Search books with keyword: ${keyword}`, async ({ page }) => {
-      // Mỗi keyword là 1 test riêng
+    test(`TC01 - Search books with keyword: ${keyword} @smoke @regression`, async ({ page }) => {
 
       const bookstorePage = new BookStorePage(page);
-      // Tạo object BookStorePage
 
-      console.log(`\nStart test with keyword: ${keyword}`);
-
+      // Step 1: Navigate to Book Store
       await bookstorePage.goto();
-      // Mở trang book store
 
+      // Step 2: Search by keyword
       await bookstorePage.searchBook(keyword);
-      // Tìm kiếm sách
 
+      // Step 3: Verify result
       const bookTitles = bookstorePage.getBookTitles();
-      // Lấy danh sách title
-
       const count = await bookTitles.count();
-      // Đếm số sách
-
-      console.log(`Found ${count} books`);
 
       expect(count).toBeGreaterThan(0);
-      // Phải có ít nhất 1 kết quả
-
-      let isTestPassed = true;
-      // Biến đánh dấu test pass/fail
 
       for (let i = 0; i < count; i++) {
-        // Lặp từng cuốn sách
-
         const title = await bookTitles.nth(i).innerText();
-        // Lấy text title
-
-        console.log(`Book ${i + 1}: ${title}`);
-
-        if (!title.toLowerCase().includes(SEARCH_EXPECT_TEXT)) {
-          // Nếu title không chứa keyword mong đợi
-          isTestPassed = false;
-        }
-      }
-
-      if (isTestPassed) {
-        console.log(`Test PASSED for keyword: ${keyword}`);
-      } else {
-        console.log(`Test FAILED for keyword: ${keyword}`);
-        throw new Error('Search result contains invalid books');
-        // Fail test
+        expect(title.toLowerCase()).toContain(SEARCH_EXPECT_TEXT);
       }
     });
+
   }
 });
